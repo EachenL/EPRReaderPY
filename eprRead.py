@@ -7,6 +7,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import zipfile
 import os
+import struct
+
+
+
+
 def level_rate(level_list):
     num = len(level_list)
     num8 = np.sum(level_list == 8 )
@@ -35,10 +40,11 @@ class EPRread:
         # epr本质上是压缩包，先解压
         with open(EPRfile, "rb") as br:
             # 先读取rec文件尾
-            br.seek(-4, 2)
-            leng = unpack("i", br.read(4))[0]  # 注释信息总长度
+            br.seek(-11, 2)
+            leng = unpack("q", br.read(8))[0]  # 注释信息总长度
             br.seek(-leng, 2)
             self.__comment = readStr(br) #医生的注释信息
+
             self.__type = readStr(br)
             self.__eye_radius = eye_radius
             # 从rec文件头读取医生信息
@@ -226,8 +232,8 @@ def readStr(reader):
     return str(reader.read(len), "utf-8")
 
 if __name__ == "__main__":  # 这里是示例用法
-    pathndpi = "D:\\lxy_workspace\\scripts\\python\\data\\ndpi\\63356.ndpi"
-    rec = EPRread("D:\\lxy_workspace\\scripts\\python\\data\\2020.11.30阅片数据\\man_43_20_0_0\\63356.epr",pathndpi,2)
+    pathndpi = "C:\\Users\\shund\\Desktop\\SightPoint\\11111.ndpi"
+    rec = EPRread("C:\\Users\\shund\\Desktop\\SightPoint\\11111.epr",pathndpi,2)
 
     level_List = np.array(rec.now_level,np.uint8)
 
