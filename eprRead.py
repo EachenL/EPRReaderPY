@@ -7,10 +7,35 @@ import matplotlib.pyplot as plt
 import numpy as np
 import zipfile
 import os
-import struct
 
+class Color:
+    def __init__(self, R, G, B, A):
+        red = R
+        green = G
+        black = B
+        alpha = A
 
+class MapDatumFrame:
+    def __init__(self, X, Y, R, PointCount, Level, Color, StartTick, EndTick, Comment):
+        self.x = X
+        self.y = Y
+        self.r = R
+        self.point_count = PointCount
+        self.level = Level
+        self.color = Color
+        self.start_tick = StartTick
+        self.end_tick = EndTick
+        self.comment = Comment
 
+class DatumFrame:
+    def __init__(self, screenX, screenY, level, eyeX, eyeY, headZ, timeStamp):
+        self.screenX = screenX
+        self.screenY = screenY
+        self.level = level
+        self.eyeX = eyeX
+        self.eyeY = eyeY
+        self.headZ = headZ
+        self.timeStamp = timeStamp
 
 def level_rate(level_list):
     num = len(level_list)
@@ -30,7 +55,7 @@ def sroot(a, b):
     '''
     return sqrt(pow(a, 2) + pow(b, 2))
 
-
+# 此类专门读epr文件，所有数据均设为公有
 class EPRread:
     def __init__(self, EPRfile: str, pathndpi:str, eye_radius):
 
@@ -38,203 +63,166 @@ class EPRread:
                读取EPR文件。
         '''
         # epr本质上是压缩包，先解压
+
+        # 标注数据
+        self.mapdatum_data = []
+        # 阅片数据
+        self.datum_data = []
+
         with open(EPRfile, "rb") as br:
-            # 先读取rec文件尾
-            br.seek(-11, 2)
-            leng = unpack("q", br.read(8))[0]  # 注释信息总长度
-            br.seek(-leng, 2)
-            self.__comment = readStr(br) #医生的注释信息
+            # 从rec文件头读取医生和切片信息
 
-            self.__type = readStr(br)
-            self.__eye_radius = eye_radius
-            # 从rec文件头读取医生信息
             br.seek(0, 0)
-            isMan = unpack("?", br.read(1))[0]#unpack("?",br.read(n))[0] n代表读取的字节数 0代表第一个列表
-            age = unpack("H", br.read(2))[0]
-            time = unpack("H", br.read(2))[0]
-            level = unpack("H", br.read(2))[0] & 0b11111111
-            self.__doctor = [isMan, age, time, level]
-            self.__fileName = readStr(br)
-            self.quickHash = readStr(br)  # 快速哈希值
-            # 从erc文件未读取一个整数，代表记录的总帧数
-            br.seek(-4, 2)
-            self.__tickNum = unpack("i", br.read(4))[0]
-            # 从erc文件头读取两个整数，代表录制时的屏幕宽高
-            br.seek(0, 0)
-            width = unpack("i", br.read(4))[0]
-            height = unpack("i", br.read(4))[0]
-            mmheight = unpack("f", br.read(4))[0]
-            mmwidth = unpack("f", br.read(4))[0]
-            self.__screen = [width, height, mmwidth, mmheight]
-
-            #######求能显示的绝对坐标的大小######
-            slide = openslide.OpenSlide(pathndpi)
-            [m, n] = slide.level_dimensions[0]
-            k = ( mmwidth/ m + mmheight / n) / 2   #m,n为该原始切片的大小【m,n】 k为屏幕中能够显示的绝对坐标的大小 mm/个,
-            #print('[m,n]is',[m,n])
-            # print(width, height)
-            # print(mmwidth,mmheight)
-            # print('k is ',k)
-
-            #######添加data数据######self.__data.append([x, y, z, l, v, sx, sy,t,theta,r,degree])
-            self.__data = []
-            self.__offset = []
-            self.__X = []; self.point_radius=[]
-            self.__Y = []; self.point_deg =[]
-            self.now_level = []
-            self.__scan = []
-            self.Z = []; self.__T = []
-            nowTick = 0
-            l = 8           # 不同mode将改变当前帧的l
             while True:
-                if nowTick >= self.__tickNum:
-                    break
-                # 获取模式信息
-                mode = unpack("i", br.read(4))[0]
-                if mode == 0:  # 移动
-                    #br.seek(8, 1)
-                    sx = -int(unpack("f", br.read(4))[0] - width / 2) * l
-                    sy = int(unpack("f", br.read(4))[0] + height / 2) * l
-                    # print('rawsy:', sy/l-height / 2)
-                    nowTick += 1
-                    x = unpack("i", br.read(4))[0]
-                    y = unpack("i", br.read(4))[0]
-                    z = unpack("f", br.read(4))[0]
-                    t = unpack("f", br.read(4))[0]
-                    theta = atan((sqrt(pow((x-sx), 2)+pow((y-sy), 2))*8*k/l)/z)  # 计算视线角度=rad的数值表示
-                    deg = theta *180/pi
-                    r =(z*tan(theta+self.__eye_radius/180*pi)-z*tan(theta))*l/(8*k) # r为当前倍率下视野半径在最低倍率下的映射
-                    # print('r is:',r)
-                    # print('视角 is:', theta)
-                    # print('z is:', z,'\n')
-                    if z > 0:
-                        v = True
-                    else:
-                        v = False
-                    self.__data.append([x, y, z, l, v, sx, sy, t, deg,r]) #sx,sy 为屏幕中心坐标
-                    self.__offset.append([x, y])
-                    self.__X.append(x)
-                    self.__Y.append(y)
-                    self.point_radius.append(r)
-                    self.point_deg.append(deg)
-                    self.now_level.append(l)
-                    self.Z.append(z)
-                    self.__T.append(t)
-
-                elif mode == 1:  # 放大
-                    if l > 1:
-                        l /= 2
-                elif mode == 2:  # 缩小
-                    if l < 8:
-                        l *= 2
-                elif mode == 3:  # 终止
-                    break
-                else:  # 文件损坏
-                    raise Exception("Unexpected mode " + str(mode) + " at Tick " + str(nowTick))
-                self.__scan.append([mode, l])
-            self.mean_deg = np.mean(self.point_deg)
-            self.mean_radius = int(np.mean(self.point_radius))
-            # print('theta is ',theta)
-            # print('r is ', r)
-
-            ##############求角速度#################################################################################################
-            screen = self.__screen
-            ppm = (screen[0] / screen[2] + screen[1] / screen[3]) / 2  #像素/毫米，绝大多数屏幕都是方形像素，如果不是也按平均值处理
-            self.__av = []
-            for i in range(len(self.__data) - 1):
-                if self.__data[i][3] != self.__data[i + 1][3]:  # 这一帧是倍率切换帧，不处理，用上一帧数据代替
-                    self.__av.append(self.__av[-1])
-                    continue
-                #同level下 的视点移动
-                thisData = self.__data[i]
-                thisLevel = thisData[3]
-                nextData = self.__data[i + 1]
-                nextLevel = nextData[3]
-                if isnan(thisData[2]):  # 表示此帧眼动仪未取到头部位置
-                    if isnan(nextData[2]):  # 下一帧为nan
-                        self.__av.append(0)
-                        continue
-                    else:
-                        h = nextData[2]
+                if (checkSegment(br, 'EPRFILE')):
+                    # 当前epr文件版本号
+                    self.now_version = unpack('i', br.read(4))[0]
+                    # 当前录像文件的每秒帧数
+                    self.fps = unpack('i', br.read(4))[0]
+                    # 录像文件的总帧数
+                    self.frame_count = unpack('i', br.read(4))[0]
                 else:
-                    if isnan(nextData[2]):  # 下一帧为nan
-                        h = thisData[2]
-                    else:
-                        h = (thisData[2] + nextData[2]) / 2  # 取平均距离
-                SX = (thisData[5] + nextData[5]) / 2   # 求屏幕中点绝对平均坐标
-                SY = (thisData[6] + nextData[6]) / 2
+                    br.seek(-len('EPRFILE'), 1)
 
-                #ppm处理是否不合理？   我觉得应该用mm/个坐标 or   k 为 mm/绝对坐标
-                ac = dis(thisData[0: 2], [SX,SY]) *thisLevel *k               #ac = 多少毫米 ；  ac = dis(thisData[0: 2], [SX,SY]) / thisLevel/ ppm  ppm为像素/mm
-                ad = sroot(ac, h)                                                   #眼睛至A视点距离
-                bc = dis(nextData[0: 2], [SX,SY]) * nextLevel  *k
-                bd = sroot(bc, h)                                                   #眼睛至B视点距离
-                ab = dis([thisData[0] , thisData[1] ],
-                         [nextData[0] , nextData[1] ]) * thisLevel*k #两视点距离    # 在thislevel下 相距坐标占多少mm
+                if (checkSegment(br, 'DOCTOR')):
+                    # 医生信息
+                    self.doctor_name = readStr(br)
+                    self.doctor_is_man = unpack('?', br.read(1))[0]
+                    self.doctor_age = unpack('H', br.read(2))[0]
+                    self.doctor_work_year = unpack('H', br.read(2))[0]
+                    self.doctor_level = unpack('H', br.read(2))[0]
+                    self.doctor_readnum = unpack('H', br.read(2))[0]
+                else:
+                    br.seek(-len('DOCTOR'), 1)
 
-                cosab = (pow(ad, 2) + pow(bd, 2) - pow(ab, 2)) / (2 * ad * bd)      #两视点间视角 余弦
-                if cosab > 1:
-                    cosab = 1
-                elif cosab < 0:
-                    cosab = 0
-                angle = acos(cosab)         #两视点间视角（返回pi对应数字值 如 pi=3.14）
-                rads = angle / (nextData[-3] - thisData[-3])        #角速度 rad/s
-                degree_s = 180 * rads/pi                                 #   degree = 180 * rads  不对吧？
-                self.__data[i].append(degree_s)  ##self.__data.append([x, y, z, l, v, sx, sy,t,deg,r,degree_s])
-                self.__av.append(degree_s)
+                if (checkSegment(br, 'SLIDE')):
+                    # 切片信息
+                    self.slide_name = readStr(br)
+                    self.quick_hash = readStr(br)
+                    self.slidemaxwidth = unpack('q', br.read(8))[0]
+                    self.slidemaxheight = unpack('q', br.read(8))[0]
+                    self.maxwidth = unpack('q', br.read(8))[0]
+                    self.maxheight = unpack('q', br.read(8))[0]
+                    self.minlevel = unpack('i', br.read(4))[0]
+                else:
+                    br.seek(-len('SLIDE'), 1)
 
-###########以上求角速度##############################################################
-    def getAngularV(self): #获取角速度
-        return self.__av
+                if (checkSegment(br, 'SCREEN')):
+                    # 屏幕信息
+                    self.screen_width = unpack('i', br.read(4))[0]
+                    self.screen_height = unpack('i', br.read(4))[0]
+                    self.cm_width = unpack('f', br.read(4))[0]
+                    self.cm_height = unpack('f', br.read(4))[0]
+                    br.seek(24, 1)
+                    break
+            if (checkSegment(br, 'DATA')):
+                a = self.frame_count
 
-    def getMode(self):
-        return self.__scan
-    def getDoctorInfo(self):  #获取医生信息
-        return self.__doctor
-        
-    def getSlideFileName(self):  #获取文件信息
-        return self.__fileName
+                while (a > 0):
+                    a -= 1
+                    datum_screenX = unpack('i', br.read(4))[0]
+                    datum_screenY = unpack('i', br.read(4))[0]
+                    datum_level = unpack('i', br.read(4))[0]
+                    datum_eyeX = unpack('i', br.read(4))[0]
+                    datum_eyeY = unpack('i', br.read(4))[0]
+                    datum_headZ = unpack('d', br.read(8))[0]
+                    datum_timeStamp = unpack('d', br.read(8))[0]
+                    datumframe = DatumFrame(datum_screenX, datum_screenY, datum_level, datum_eyeX, datum_eyeY,
+                                            datum_headZ, datum_timeStamp)
+                    self.datum_data.append(datumframe)
+            # 读取rec文件尾
+            br.seek(-3, 2)
 
-    def getScreenInfo(self):  #获取 长宽像素，以及屏幕尺寸（mm）
-        return self.__screen
+            if(checkSegment(br,'END') != True):
+                return
+            br.seek(-11, 2)
+            offset = unpack('q', br.read(8))[0]
+            br.seek(offset, 0)
+            while True:
+                if(checkSegment(br, 'THRESHOLD')):
+                    # 眼动角速度阈值
+                    self.threshold = unpack('d', br.read(8))[0]
+                    offset = unpack('q', br.read(8))[0]
+                    br.seek(offset-8, 0)
+                    offset = unpack('q', br.read(8))[0]
+                    br.seek(offset, 0)
+                if(checkSegment(br, 'MAPDATA')):
+                    # 共有多少个标注数据
+                    self.mapdata_frame_count = unpack('i', br.read(4))[0]
+                    mapdata_frame_count = self.mapdata_frame_count
+                    while(mapdata_frame_count > 0):
+                        mapdata_frame_count -= 1
+                        # 请查阅EPR文件构造文档 MapDatum 数据部分
+                        mapdatum_X = unpack('f', br.read(4))[0]
+                        mapdatum_Y = unpack('f', br.read(4))[0]
+                        mapdatum_Round = unpack('f', br.read(4))[0]
+                        mapdatum_point_count = unpack('i', br.read(4))[0]
+                        mapdatum_level = unpack('i', br.read(4))[0]
+                        mapdatum_R = unpack('f', br.read(4))[0]
+                        mapdatum_G = unpack('f', br.read(4))[0]
+                        mapdatum_B = unpack('f', br.read(4))[0]
+                        mapdatum_A = unpack('f', br.read(4))[0]
+                        mapdatum_color = Color(mapdatum_R, mapdatum_G, mapdatum_B, mapdatum_A)
+                        mapdatum_start_tick = unpack('i', br.read(4))[0]
+                        mapdatum_end_tick = unpack('i', br.read(4))[0]
+                        mapdatum_comment = readStr(br)
+                        mapdatum_frame = MapDatumFrame(mapdatum_X,mapdatum_Y,mapdatum_Round,mapdatum_point_count,mapdatum_level,mapdatum_color,mapdatum_start_tick,mapdatum_end_tick,mapdatum_comment)
+                        self.mapdatum_data.append(mapdatum_frame)
+                    offset = unpack('q', br.read(8))[0]
+                    br.seek(offset-8, 0)
+                    offset = unpack('q', br.read(8))[0]
+                    br.seek(offset, 0)
+                if(checkSegment(br, 'TAIL')):
+                    # 医生的文本注释信息
+                    self.comment = readStr(br)
+                    if(self.now_version < 22):
+                        br.seek(2, 1)
+                    # 医生选择的病变类型
+                    self.type_str = readStr(br)
+                    break
 
-    def getTickNum(self): #获取总帧数
-        return self.__tickNum
 
-    def getData(self):  #获取数据
-        return self.__data
 
-    def getoffset(self):   #视点的坐标x,y
-        return self.__offset
 
-    def getComment(self):
-        return self.__comment
-    
-    def getType(self):   #获取切片病理类型
-        return self.__type
-    def getX(self):
-        return self.__X
-    def getY(self):
-        return self.__Y
-    def getT(self):
-        return self.__T
+
+
+
+
+
+
+def checkSegment(br,s):
+    st = str(br.read(len(s)), 'utf-8')
+    if(st == s):
+        return True
+    else:
+        br.seek(-len(s), 1)
+        return False
+
+
 
 def readStr(reader):
     # 获取第一个长度前缀
-    len = unpack("b", reader.read(1))[0]
+    len = unpack("B", reader.read(1))[0]
     if len == 0:
         return "0"
     # 判断是否有下一个长度前缀
     if len >> 7 == -1:
         len = len & 0b01111111 + unpack("b", reader.read(1))[0] * 128
+        # reader.seek(2, 1)
     else:
         len = len & 0b01111111
-    return str(reader.read(len), "utf-8")
+        # reader.seek(1, 1)
+    try:
+        s = str(reader.read(len), 'utf-8')
+    except Exception as e:
+        print(e)
+    return s
 
 if __name__ == "__main__":  # 这里是示例用法
     pathndpi = "C:\\Users\\shund\\Desktop\\SightPoint\\11111.ndpi"
-    rec = EPRread("C:\\Users\\shund\\Desktop\\SightPoint\\11111.epr",pathndpi,2)
-
+    eprfile = "C:\\Users\\shund\\Desktop\\SightPoint\\111112.epr"
+    rec = EPRread(eprfile, pathndpi, 2)
+    print(rec.comment)
     level_List = np.array(rec.now_level,np.uint8)
 
     n8,r4,r2 = level_rate(level_List)
