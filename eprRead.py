@@ -6,12 +6,18 @@ from math import  *
 import numpy as np
 
 def checkSegment(br,s):
-    st = str(br.read(len(s)), 'utf-8')
-    if(st == s):
-        return True
-    else:
+    try:
+        st = str(br.read(len(s)), 'utf-8')
+    except Exception:
+        print(Exception.args)
         br.seek(-len(s), 1)
-        return False
+    else:
+        if (st == s):
+            return True
+        else:
+            br.seek(-len(s), 1)
+            return False
+
 
 class Color:
     def __init__(self, R, G, B, A):
@@ -61,7 +67,7 @@ def sroot(a, b):
 
 # 此类专门读epr文件，所有数据均设为公有
 class EPRread:
-    def __init__(self, EPRfile: str, eye_radius):
+    def __init__(self, EPRfile: str, eye_radius=1.0):
 
         '''
                读取EPR文件。
@@ -208,6 +214,7 @@ class EPRread:
                     br.seek(offset-8, 0)
                     offset = unpack('q', br.read(8))[0]
                     br.seek(offset, 0)
+
                 if(checkSegment(br, 'MAPDATA')):
                     # 共有多少个标注数据
                     self.mapdata_frame_count = unpack('i', br.read(4))[0]
@@ -246,19 +253,9 @@ class EPRread:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 def readStr(reader):
     # 获取第一个长度前缀
+    s = ''
     len = unpack("B", reader.read(1))[0]
     if len == 0:
         return "0"
