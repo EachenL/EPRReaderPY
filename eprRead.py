@@ -1,4 +1,4 @@
-
+# 对应第4第5批数据
 from struct import *
 from math import  *
 
@@ -91,8 +91,8 @@ class EPRread:
                     self.fps = unpack('i', br.read(4))[0]
                     # 录像文件的总帧数
                     self.tickNum = unpack('i', br.read(4))[0]
-                else:
-                    br.seek(-len('EPRFILE'), 1)
+
+
 
                 if (checkSegment(br, 'DOCTOR')):
                     # 医生信息
@@ -104,8 +104,8 @@ class EPRread:
                     readnum = unpack('H', br.read(2))[0]
                     self.doctor = {'name':name,'isMale': isMale, 'age': age, 'year': year,
                            'level':level,'readnum':readnum}
-                else:
-                    br.seek(-len('DOCTOR'), 1)
+
+
 
                 if (checkSegment(br, 'SLIDE')):
                     # 切片信息
@@ -116,8 +116,7 @@ class EPRread:
                     self.MaxWidth = unpack('q', br.read(8))[0]
                     self.MaxHeight = unpack('q', br.read(8))[0]
                     self.minlevel = unpack('i', br.read(4))[0]
-                else:
-                    br.seek(-len('SLIDE'), 1)
+
 
                 if (checkSegment(br, 'SCREEN')):
                     # 屏幕信息
@@ -129,6 +128,7 @@ class EPRread:
                                'cmWidth': self.screenCMWidth, 'cmHeight': self.screenCMHeight}
                     br.seek(24, 1)
                     break
+
             if (checkSegment(br, 'DATA')):
                 self.minLevel = 10  # 先将minlevel设一个很大的数
                 self.data = []
@@ -199,57 +199,70 @@ class EPRread:
                             self.headz.append(headZ)
                             self.theta.append(theta)
                     # print('self.firstLevel', self.firstLevel)
-            # 读取rec文件尾
-            br.seek(-3, 2)
-            if(checkSegment(br,'END') != True):
-                return
-            br.seek(-11, 2)
-            offset = unpack('q', br.read(8))[0]
-            br.seek(offset, 0)
-            while True:
-                if(checkSegment(br, 'THRESHOLD')):
-                    # 眼动角速度阈值
-                    self.threshold = unpack('d', br.read(8))[0]
-                    offset = unpack('q', br.read(8))[0]
-                    br.seek(offset-8, 0)
-                    offset = unpack('q', br.read(8))[0]
-                    br.seek(offset, 0)
+            if(self.now_version > 21):
+                # 读取rec文件尾
+                br.seek(-3, 2)
+                if(checkSegment(br,'END') != True):
+                    return
+                br.seek(-11, 2)
+                offset = unpack('q', br.read(8))[0]
+                br.seek(offset, 0)
+                while True:
+                    if(checkSegment(br, 'THRESHOLD')):
+                        # 眼动角速度阈值
+                        self.threshold = unpack('d', br.read(8))[0]
+                        offset = unpack('q', br.read(8))[0]
+                        br.seek(offset-8, 0)
+                        offset = unpack('q', br.read(8))[0]
+                        br.seek(offset, 0)
 
-                if(checkSegment(br, 'MAPDATA')):
-                    # 共有多少个标注数据
-                    self.mapdata_frame_count = unpack('i', br.read(4))[0]
-                    mapdata_frame_count = self.mapdata_frame_count
-                    while(mapdata_frame_count > 0):
-                        mapdata_frame_count -= 1
-                        # 请查阅EPR文件构造文档 MapDatum 数据部分
-                        mapdatum_X = unpack('f', br.read(4))[0]
-                        mapdatum_Y = unpack('f', br.read(4))[0]
-                        mapdatum_Round = unpack('f', br.read(4))[0]
-                        mapdatum_point_count = unpack('i', br.read(4))[0]
-                        maplevel = unpack('i', br.read(4))[0]
-                        mapdatum_R = unpack('f', br.read(4))[0]
-                        mapdatum_G = unpack('f', br.read(4))[0]
-                        mapdatum_B = unpack('f', br.read(4))[0]
-                        mapdatum_A = unpack('f', br.read(4))[0]
-                        mapdatum_color = Color(mapdatum_R, mapdatum_G, mapdatum_B, mapdatum_A)
-                        mapdatum_start_tick = unpack('i', br.read(4))[0]
-                        mapdatum_end_tick = unpack('i', br.read(4))[0]
-                        mapdatum_comment = readStr(br)
-                        mapdatum_frame = MapDatumFrame(mapdatum_X,mapdatum_Y,mapdatum_Round,mapdatum_point_count,maplevel,mapdatum_color,mapdatum_start_tick,mapdatum_end_tick,mapdatum_comment)
-                        self.mapdatum_data.append(mapdatum_frame)
-                    offset = unpack('q', br.read(8))[0]
-                    br.seek(offset-8, 0)
-                    offset = unpack('q', br.read(8))[0]
-                    br.seek(offset, 0)
+                    if(checkSegment(br, 'MAPDATA')):
+                        # 共有多少个标注数据
+                        self.mapdata_frame_count = unpack('i', br.read(4))[0]
+                        mapdata_frame_count = self.mapdata_frame_count
+                        while(mapdata_frame_count > 0):
+                            mapdata_frame_count -= 1
+                            # 请查阅EPR文件构造文档 MapDatum 数据部分
+                            mapdatum_X = unpack('f', br.read(4))[0]
+                            mapdatum_Y = unpack('f', br.read(4))[0]
+                            mapdatum_Round = unpack('f', br.read(4))[0]
+                            mapdatum_point_count = unpack('i', br.read(4))[0]
+                            maplevel = unpack('i', br.read(4))[0]
+                            mapdatum_R = unpack('f', br.read(4))[0]
+                            mapdatum_G = unpack('f', br.read(4))[0]
+                            mapdatum_B = unpack('f', br.read(4))[0]
+                            mapdatum_A = unpack('f', br.read(4))[0]
+                            mapdatum_color = Color(mapdatum_R, mapdatum_G, mapdatum_B, mapdatum_A)
+                            mapdatum_start_tick = unpack('i', br.read(4))[0]
+                            mapdatum_end_tick = unpack('i', br.read(4))[0]
+                            mapdatum_comment = readStr(br)
+                            mapdatum_frame = MapDatumFrame(mapdatum_X,mapdatum_Y,mapdatum_Round,mapdatum_point_count,maplevel,mapdatum_color,mapdatum_start_tick,mapdatum_end_tick,mapdatum_comment)
+                            self.mapdatum_data.append(mapdatum_frame)
+                        offset = unpack('q', br.read(8))[0]
+                        br.seek(offset-8, 0)
+                        offset = unpack('q', br.read(8))[0]
+                        br.seek(offset, 0)
 
-                if(checkSegment(br, 'TAIL')):
-                    # 医生的文本注释信息
-                    self.comment = readStr(br)
-                    if(self.now_version < 22):
+                    if(checkSegment(br, 'TAIL')):
+                        # 医生的文本注释信息
+                        self.comment = readStr(br)
+                        if(self.now_version < 22):
+                            br.seek(2, 1)
+                        # 医生选择的病变类型
+                        self.typeStr = readStr(br)
+                        break
+            else:
+                try:
+                    if (checkSegment(br, 'TAIL')):
+                        self.comment = readStr(br)
                         br.seek(2, 1)
-                    # 医生选择的病变类型
-                    self.typeStr = readStr(br)
-                    break
+                        self.typeStr = readStr(br)
+                except Exception:
+                    print(Exception.args)
+
+
+
+
 
 
 

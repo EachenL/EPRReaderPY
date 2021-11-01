@@ -43,7 +43,7 @@ if __name__ == '__main__':
         win32gui.SelectObject(hwndDC, prebrush)
         # # 回收资源
         #win32gui.DeleteObject(hPen)
-       # win32gui.DeleteObject(hbrush)
+        #win32gui.DeleteObject(hbrush)
         #win32gui.DeleteObject(prebrush)
         win32gui.ReleaseDC(hwnd, hwndDC)
         time.sleep(1)
