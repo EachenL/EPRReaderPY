@@ -1,7 +1,7 @@
 # 对应第4第5批数据
 from struct import *
 from math import  *
-
+from binaryStream import BinaryStream
 
 import numpy as np
 
@@ -172,11 +172,12 @@ class EPRread:
                     # print(headZ)
                     # self.screenX.append(screenX)
                     # self.screenY.append(screenY)
-                    if headZ > 10 and eyeX > 0 and eyeY > 0:
+                    if headZ > 10 and eyeX > 0 and eyeY > 0 and dl > 0 and dl < 10:
                         # r = headZ * tan(3.0 / 180) * ppm  # 计算半径r
                         x = (eyeX - screenX) / (2 ** dl)
                         y = (eyeY - screenY) / (2 ** dl)  # ppm----像素/cm
                         if 0 <= x < self.MaxWidth and 0 <= y < self.MaxHeight:
+                            print(dl)
                             sx = (centerX - screenX) / (2 ** dl)
                             sy = (centerY - screenY) / (2 ** dl)
                             theta = atan((sqrt(pow((eyeX - centerX), 2) + pow((eyeY - centerY), 2))) / (
@@ -260,9 +261,9 @@ class EPRread:
                 except Exception:
                     print(Exception.args)
 
-
-
-
+def readString(self):
+    length = self.readUInt16()
+    return self.unpack(str(length) + 's', length)
 
 
 
@@ -273,7 +274,8 @@ def readStr(reader):
     if len == 0:
         return "0"
     # 判断是否有下一个长度前缀
-    if len >> 7 == -1:
+    a = len >> 7
+    if len >> 7 == 1:
         len = len & 0b01111111 + unpack("b", reader.read(1))[0] * 128
         # reader.seek(2, 1)
     else:

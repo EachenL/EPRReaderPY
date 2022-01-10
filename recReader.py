@@ -8,14 +8,27 @@ class RECreader:
         '''
             读取REC和ERC文件。如果是新版ERC文件则要令newVersion=True
         '''
-        br = open(RECfile, "rb")
-        ebr = open(ERCfile, "rb")
+
+        typelist = ["黑色素瘤", "基底细胞癌", "良性痣", "其他"]
+        try:
+            br = open(RECfile, "rb")
+            ebr = open(ERCfile, "rb")
+        except:
+            return
         # 先读取rec文件尾
-        br.seek(-4, 2)
+        try:
+            br.seek(-4, 2)
+        except:
+            print(RECfile)
+            return
+
         len = unpack("i", br.read(4))[0]  # 注释信息总长度
         br.seek(-len, 2)
-        self.__comment = readStr(br)
-        self.__type = readStr(br)
+        self.comment = readStr(br)
+        self.type = readStr(br)
+        if self.type == None or self.type == '':
+            i = 1
+        # self.diag = typelist[self.type]
         # 从rec文件头读取医生信息
         br.seek(0, 0)
         isMan = unpack("?", br.read(1))[0]
@@ -23,7 +36,7 @@ class RECreader:
         time = unpack("H", br.read(2))[0]
         level = unpack("H", br.read(2))[0]
         self.__doctor = [isMan, age, time, level]
-        self.__fileName = readStr(br)
+        self.fileName = readStr(br)
         # 从erc文件未读取一个整数，代表记录的总帧数
         ebr.seek(-4, 2)
         self.__tickNum = unpack("i", ebr.read(4))[0]
@@ -70,7 +83,7 @@ class RECreader:
         return self.__doctor
         
     def getSlideFileName(self):
-        return self.__fileName
+        return self.fileName
 
     def getScreenInfo(self):
         return self.__screen
@@ -82,10 +95,10 @@ class RECreader:
         return self.__data
 
     def getComment(self):
-        return self.__comment
+        return self.comment
     
     def getType(self):
-        return self.__type
+        return self.type
 
 def readStr(reader):
     # 获取第一个长度前缀
@@ -93,7 +106,7 @@ def readStr(reader):
     if len == 0:
         return ""
     # 判断是否有下一个长度前缀
-    if len >> 7 == -1:
+    if len >> 7 == 1:
         len = len & 0b01111111 + unpack("b", reader.read(1))[0] * 128
     else:
         len = len & 0b01111111

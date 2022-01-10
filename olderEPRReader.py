@@ -73,7 +73,7 @@ class oldEPRread:
                读取EPR文件。
         '''
         # epr本质上是压缩包，先解压
-
+        typelist = ["黑色素瘤", "基底细胞癌", "良性痣", "其他"]
         # 标注数据
         self.mapdatum_data = []
         # 阅片数据
@@ -168,6 +168,10 @@ class oldEPRread:
             self.comment = readStr(br)
             self.type = unpack('h', br.read(2))[0]
             self.typeStr = readStr(br)
+            try:
+                self.diag = typelist[self.type]
+            except:
+                self.diag = '超出索引'
 
 
 
@@ -180,7 +184,7 @@ def readStr(reader):
     if len == 0:
         return "0"
     # 判断是否有下一个长度前缀
-    if len >> 7 == -1:
+    if len >> 7 == 1:
         len = len & 0b01111111 + unpack("b", reader.read(1))[0] * 128
         # reader.seek(2, 1)
     else:
