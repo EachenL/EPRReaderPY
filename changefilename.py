@@ -5,6 +5,10 @@ import os
 import xlwt
 import xlrd
 from shutil import copyfile
+
+
+# 获得excel文件中的所有数据，并存入labels中
+# file为excel文件路径
 def getlabels(file):
     lfile = xlrd.open_workbook(file)
     lfilesheets = lfile.sheet_names()
@@ -19,6 +23,7 @@ def getlabels(file):
             labels.append(nowsheet.row_values(j))
     return labels, rows
 
+
 def getfiles(dir):
     all = os.walk(dir)
     filepaths = []
@@ -29,11 +34,13 @@ def getfiles(dir):
             filepaths.append(os.path.join(root, file))
     return filepaths, filenames
 
+
 def getnamefrompath(path):
     namewithext = os.path.split(path)[1]
     name = os.path.splitext(namewithext)[0]
     ext = os.path.splitext(namewithext)[1]
     return name, ext
+
 
 # 5th dataset
 def rechecklabel(resfile, labelfile):
@@ -50,8 +57,8 @@ def rechecklabel(resfile, labelfile):
                 break
         if flag == False:
             reslabels[i].append(' ')
-
     return reslabels
+
 
 def writelisttoxls(list, target):
     workbook = xlwt.Workbook()
@@ -63,6 +70,7 @@ def writelisttoxls(list, target):
         i = i + 1
     workbook.save(target)
 
+
 def addpathtoexcel(list, origin):
     paths, names = getfiles(origin)
     for path in paths:
@@ -71,7 +79,6 @@ def addpathtoexcel(list, origin):
                 list[row].append(path)
                 break
     return list
-
 
 
 
