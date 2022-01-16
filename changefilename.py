@@ -48,15 +48,31 @@ def rechecklabel(resfile, labelfile):
     labels, lrow = getlabels(labelfile)
     newlabel = []
     for i in range(0, resrow):
-        flag = False
+        slide_name, ext = getnamefrompath(reslabels[i][1])
+        slide_num = slide_name.split('_')[0] + '_' + slide_name.split('_')[1]
+        slide_label = slide_name.split('_')[2]
+        slide_last = slide_name.split('_')[3]
+        current_label = ''
         for j in range(0, lrow):
-            if reslabels[i][2].__contains__(labels[j][0]):
-                nlabel = reslabels[i][0].rsplit('_', 1)[0] + '_' + labels[j][1] + '_' + '0' + getnamefrompath(reslabels[i][0])[1]
-                reslabels[i].append(nlabel)
-                flag = True
+            if(reslabels[i][2].__contains__(labels[j][0])):
+                current_label = labels[j][1]
                 break
-        if flag == False:
-            reslabels[i].append(' ')
+        if(current_label != ''):
+            if(current_label != slide_label):
+                recheck_name = slide_num + '-' + current_label + '-' + slide_last + ext
+                recheck_flag = 0
+                reslabels[i].append(recheck_name)
+                reslabels[i].append(recheck_flag)
+            else:
+                recheck_name = slide_num + '-' + current_label + '-' + slide_last + ext
+                recheck_flag = 1
+                reslabels[i].append(recheck_name)
+                reslabels[i].append(recheck_flag)
+        else:
+            recheck_name = '0'
+            recheck_flag = 2
+            reslabels[i].append(recheck_name)
+            reslabels[i].append(recheck_flag)
     return reslabels
 
 
@@ -95,39 +111,42 @@ def copytotarget(dir, target):
     #根据excel文件中的路径将文件复制到目的文件夹
     #更改文件名
 
+def genresfile():
+    slide_path = r'Z:\pathology_group\Database\WsisAnalysisWithGaze\皮肤病理数据集（全部）'
+    slide_paths, slide_names = getfiles(slide_path)
+    res_path = r'C:\Users\shund\Desktop\注视信息\标签'
+    res_paths, label_names = getfiles(res_path)
+    labelfile = r'C:\Users\shund\Desktop\注视信息\标签.xls'
+    resultpath = r'C:\Users\shund\Desktop\注视信息\recheck'
+    for resfile in res_paths:
+        resfilename, ext = getnamefrompath(resfile)
+        recheckfile = resultpath + '\\' + resfilename + ext
+        result = rechecklabel(resfile, labelfile)
+        writelisttoxls(result, recheckfile)
+
 
 if __name__ == "__main__":
+    totalpath = r'Z:\pathology_group\Database\WsisAnalysisWithGaze\22.1.16重新整理阅片会数据'
+    recheckpath = r'Z:\pathology_group\Database\WsisAnalysisWithGaze\22.1.16重新整理阅片会数据\整理好'
+    quespath = r'Z:\pathology_group\Database\WsisAnalysisWithGaze\22.1.16重新整理阅片会数据\有问题'
+    resultpath = r'C:\Users\shund\Desktop\注视信息\recheck'
+    res_paths, res_names = getfiles(resultpath)
+    for res in res_paths:
+        res_name, ext = getnamefrompath(res)
+        reslabels, rows = getlabels(res)
+        for i in range(0, rows):
+            if(reslabels[i][4] == 0):
+                targetfilename = recheckpath + '\\' + res_name + '\\' + reslabels[i][3]
+                copyfile(reslabels[i][1], targetfilename)
+                print('已将' + reslabels[i][1] + '粘贴至' + targetfilename)
+                targetfilename = quespath + '\\' + res_name + '\\' + reslabels[i][3]
+                copyfile(reslabels[i][1], targetfilename)
+                print('已将'+reslabels[i][1]+'粘贴至'+targetfilename)
+            elif(reslabels[i][4] == 1):
+                targetfilename = recheckpath + '\\' + res_name + '\\' + reslabels[i][3]
+                copyfile(reslabels[i][1], targetfilename)
+                print('已将' + reslabels[i][1] + '粘贴至' + targetfilename)
 
-    labelpath = r'Z:\pathology_group\Database\WsisAnalysisWithGaze\医生阅片划分数据集\label'
-    labels = os.walk(labelpath)
-    print(labels)
-    # dirpath = labels(0)
-    # dirnames = labels(1)
-    # filenames = labels(2)
-    targetpath = r'Z:\pathology_group\Database\WsisAnalysisWithGaze\经过医生初次确认的数据集\文件名经过校准的slide文件'
-    # copytotarget(labelpath, targetpath)
-
-    # slidepath = r'Z:\pathology_group\Database\WsisAnalysisWithGaze\医生阅片划分数据集\第三批public_melanoma\slide'
-    # outputpath = r'Z:\pathology_group\Database\WsisAnalysisWithGaze\经过医生初次确认的数据集\文件名经过校准的slide文件\第五批'
-    resfile = r'Z:\pathology_group\Database\WsisAnalysisWithGaze\皮肤病理数据集（全部）\郑医生\2021.10.19\郑松\第五批res.xls'
-    outfile = r'Z:\pathology_group\Database\WsisAnalysisWithGaze\皮肤病理数据集（全部）\郑医生\2021.10.19\郑松\第五批recheck.xls'
-    labelfile = r'Z:\pathology_group\Database\WsisAnalysisWithGaze\1\标签.xls'
-    # slidepaths, slidenames = getfiles(slidepath)  # 遍历slide文件得出路径和文件名列表
-    # reslabels, resnrow = getlabels(resfile)  # 得到res.xls文件中的标签
-    label, labelrow = getlabels(labelfile)  # 得到label.xls文件中的标签
-    labels = rechecklabel(resfile, labelfile)
-    writelisttoxls(labels, outfile)
-    # labels = addpathtoexcel(labels, slidepath)
-    # writelisttoxls(labels, outfile)
-    i = 1
-    # name1, extname = getnamefrompath(files[0])
-    # full = name1 + extname
-    # labels, nrow = getlabels(labelfile)
-    # name2 = labels[1][1]
-    # i =1
-    # [filename, label] = getlabels(lfilesheets)
-    # for root, dirs, files in os.walk(slidepath):
-    #     for file in files:
 
 
 
