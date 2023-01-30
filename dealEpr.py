@@ -6,6 +6,8 @@ import xlwt
 import xlrd
 import re
 
+#'test'
+
 
 def getfiles(dir):
     all = os.walk(dir)
