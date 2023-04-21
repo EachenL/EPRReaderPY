@@ -1,7 +1,7 @@
 # 对应第4第5批数据
 from struct import *
 from math import  *
-from binaryStream import BinaryStream
+# from binaryStream import BinaryStream
 
 import numpy as np
 
@@ -39,7 +39,7 @@ class MapDatumFrame:
         self.comment = Comment
 
 class DatumFrame:
-    def __init__(self, screenX, screenY, level, eyeX, eyeY, headZ, timeStamp):
+    def __init__(self, screenX, screenY, level, eyeX, eyeY, headZ, timeStamp, millitimestamp):
         self.screenX = screenX
         self.screenY = screenY
         self.level = level
@@ -47,6 +47,7 @@ class DatumFrame:
         self.eyeY = eyeY
         self.headZ = headZ
         self.timeStamp = timeStamp
+        self.millitimestamp = millitimestamp
 
 def level_rate(level_list):
     num = len(level_list)
@@ -144,6 +145,7 @@ class EPRread:
                 self.theta = []
                 self.screenX = []
                 self.screenY = []
+                self.datum = []
 
                 ppm = (self.screenPixelWidth / self.screenCMWidth +
                        self.screenPixelHeight / self.screenCMHeight) / 2  # 像素/cm
@@ -156,10 +158,88 @@ class EPRread:
                     eyeY = unpack('i', br.read(4))[0]
                     headZ = unpack('d', br.read(8))[0]
                     timeStamp = unpack('d', br.read(8))[0]
+                    cursorX = unpack('i', br.read(4))[0]
+                    cursorY = unpack('i', br.read(4))[0]
+                    length = unpack('I', br.read(4))[0]
+                    # length = int.from_bytes(br.read(4), byteorder='little')
+                    frame_states = []
+                    if length > 0:
+                        pos = br.tell()
+                        try:
+                            frame_states_count = unpack('I', br.read(4))[0]
+                            for _ in range(frame_states_count):
+                                state = unpack('b', br.read(1))[0]
+                                if state == 1:  # SlideUtilsState()
+                                    # BeginRead()
+                                    length1 = unpack('I', br.read(4))[0]
+                                    startPos = br.tell()
+                                    # Read()
+                                    isVisible = unpack('?', br.read(1))[0]
+                                    if isVisible == True:
+                                        location = (unpack('i', br.read(4))[0],
+                                                    unpack('i', br.read(4))[0])
+                                    # EndRead()
+                                    read_length = br.tell() - startPos
+                                    if length1 != read_length:
+                                        br.seek(startPos + length1, 0)
+                                    
+                                elif state == 2:  # SlideLengthMeasureState()
+                                    # BeginRead()
+                                    length1 = unpack('I', br.read(4))[0]
+                                    startPos = br.tell()   
+                                    # Read()
+                                    isVisible = unpack('?', br.read(1))[0]
+                                    if isVisible == True:
+                                        location = (unpack('i', br.read(4))[0],
+                                                    unpack('i', br.read(4))[0])
+                                        startPoint = (unpack('i', br.read(4))[0],    
+                                                      unpack('i', br.read(4))[0])
+                                        endPoint = (unpack('i', br.read(4))[0],
+                                                    unpack('i', br.read(4))[0])
+                                        listId = unpack('I', br.read(4))[0]
+                                        listLength = unpack('I', br.read(4))[0]
+                                        selectedItemIndex = unpack('i', br.read(4))[0]
+                                    # EndRead()
+                                    read_length = br.tell() - startPos
+                                    if length1 != read_length:
+                                        br.seek(startPos + length1, 0)
+                                                                     
+                                elif state == 3:  # SlideCommentState()
+                                    # BeginRead()
+                                    length1 = unpack('I', br.read(4))[0]
+                                    startPos = br.tell()
+                                    # Read()
+                                    isVisible = unpack('?', br.read(1))[0]
+                                    if isVisible == True:
+                                        location = (unpack('i', br.read(4))[0],
+                                                    unpack('i', br.read(4))[0])
+                                        selectedListId = unpack("I", br.read(4))[0]
+                                        selectedListLength = unpack("I", br.read(4))[0]
+                                        expandedListId = unpack("I", br.read(4))[0]
+                                        expandedListLength = unpack("I", br.read(4))[0]
+                                        diagScrollViewerVOffset = unpack("d", br.read(8))[0]
+                                        diagScrollViewerHOffset = unpack("d", br.read(8))[0]
+                                        diagListScrollViewerVOffset = unpack("d", br.read(8))[0]
+                                        diagListScrollViewerHOffset = unpack("d", br.read(8))[0]
+                                        commentListId = unpack("I", br.read(4))[0]
+                                        commentListLength = unpack("I", br.read(4))[0]
+                                        selectedItemIndex = unpack("i", br.read(4))[0]  
+                                    # EndRead()
+                                    read_length = br.tell() - startPos
+                                    if length1 != read_length:
+                                        br.seek(startPos + length1, 0)
+                                else:
+                                    raise Exception("Unknown state")
+                                           
+                        except:
+                            br.seek(pos + length*4, 0) # Skip if error occurs
+                                        
                     datumframe = DatumFrame(screenX, screenY, level, eyeX, eyeY,
-                                            headZ, timeStamp)
+                                            headZ, timeStamp, timeStamp*1000)
                     centerX = self.screenPixelWidth / 2
                     centerY = self.screenPixelHeight / 2
+                    self.datum.append(datumframe)
+                    
 
                     if level >= 10 and level < 0:
                         continue  # 有时候数据会异常，那就抛弃这一帧
@@ -177,7 +257,7 @@ class EPRread:
                         x = (eyeX - screenX) / (2 ** dl)
                         y = (eyeY - screenY) / (2 ** dl)  # ppm----像素/cm
                         if 0 <= x < self.MaxWidth and 0 <= y < self.MaxHeight:
-                            print(dl)
+                            # print(dl)
                             sx = (centerX - screenX) / (2 ** dl)
                             sy = (centerY - screenY) / (2 ** dl)
                             theta = atan((sqrt(pow((eyeX - centerX), 2) + pow((eyeY - centerY), 2))) / (
@@ -200,66 +280,66 @@ class EPRread:
                             self.headz.append(headZ)
                             self.theta.append(theta)
                     # print('self.firstLevel', self.firstLevel)
-            if(self.now_version > 21):
-                # 读取rec文件尾
-                br.seek(-3, 2)
-                if(checkSegment(br,'END') != True):
-                    return
-                br.seek(-11, 2)
-                offset = unpack('q', br.read(8))[0]
-                br.seek(offset, 0)
-                while True:
-                    if(checkSegment(br, 'THRESHOLD')):
-                        # 眼动角速度阈值
-                        self.threshold = unpack('d', br.read(8))[0]
-                        offset = unpack('q', br.read(8))[0]
-                        br.seek(offset-8, 0)
-                        offset = unpack('q', br.read(8))[0]
-                        br.seek(offset, 0)
+            # if(self.now_version > 21):
+            #     # 读取rec文件尾
+            #     br.seek(-3, 2)
+            #     if(checkSegment(br,'END') != True):
+            #         return
+            #     br.seek(-11, 2)
+            #     offset = unpack('q', br.read(8))[0]
+            #     br.seek(offset, 0)
+            #     while True:
+            #         if(checkSegment(br, 'THRESHOLD')):
+            #             # 眼动角速度阈值
+            #             self.threshold = unpack('d', br.read(8))[0]
+            #             offset = unpack('q', br.read(8))[0]
+            #             br.seek(offset-8, 0)
+            #             offset = unpack('q', br.read(8))[0]
+            #             br.seek(offset, 0)
 
-                    if(checkSegment(br, 'MAPDATA')):
-                        # 共有多少个标注数据
-                        self.mapdata_frame_count = unpack('i', br.read(4))[0]
-                        mapdata_frame_count = self.mapdata_frame_count
-                        while(mapdata_frame_count > 0):
-                            mapdata_frame_count -= 1
-                            # 请查阅EPR文件构造文档 MapDatum 数据部分
-                            mapdatum_X = unpack('f', br.read(4))[0]
-                            mapdatum_Y = unpack('f', br.read(4))[0]
-                            mapdatum_Round = unpack('f', br.read(4))[0]
-                            mapdatum_point_count = unpack('i', br.read(4))[0]
-                            maplevel = unpack('i', br.read(4))[0]
-                            mapdatum_R = unpack('f', br.read(4))[0]
-                            mapdatum_G = unpack('f', br.read(4))[0]
-                            mapdatum_B = unpack('f', br.read(4))[0]
-                            mapdatum_A = unpack('f', br.read(4))[0]
-                            mapdatum_color = Color(mapdatum_R, mapdatum_G, mapdatum_B, mapdatum_A)
-                            mapdatum_start_tick = unpack('i', br.read(4))[0]
-                            mapdatum_end_tick = unpack('i', br.read(4))[0]
-                            mapdatum_comment = readStr(br)
-                            mapdatum_frame = MapDatumFrame(mapdatum_X,mapdatum_Y,mapdatum_Round,mapdatum_point_count,maplevel,mapdatum_color,mapdatum_start_tick,mapdatum_end_tick,mapdatum_comment)
-                            self.mapdatum_data.append(mapdatum_frame)
-                        offset = unpack('q', br.read(8))[0]
-                        br.seek(offset-8, 0)
-                        offset = unpack('q', br.read(8))[0]
-                        br.seek(offset, 0)
+            #         if(checkSegment(br, 'MAPDATA')):
+            #             # 共有多少个标注数据
+            #             self.mapdata_frame_count = unpack('i', br.read(4))[0]
+            #             mapdata_frame_count = self.mapdata_frame_count
+            #             while(mapdata_frame_count > 0):
+            #                 mapdata_frame_count -= 1
+            #                 # 请查阅EPR文件构造文档 MapDatum 数据部分
+            #                 mapdatum_X = unpack('f', br.read(4))[0]
+            #                 mapdatum_Y = unpack('f', br.read(4))[0]
+            #                 mapdatum_Round = unpack('f', br.read(4))[0]
+            #                 mapdatum_point_count = unpack('i', br.read(4))[0]
+            #                 maplevel = unpack('i', br.read(4))[0]
+            #                 mapdatum_R = unpack('f', br.read(4))[0]
+            #                 mapdatum_G = unpack('f', br.read(4))[0]
+            #                 mapdatum_B = unpack('f', br.read(4))[0]
+            #                 mapdatum_A = unpack('f', br.read(4))[0]
+            #                 mapdatum_color = Color(mapdatum_R, mapdatum_G, mapdatum_B, mapdatum_A)
+            #                 mapdatum_start_tick = unpack('i', br.read(4))[0]
+            #                 mapdatum_end_tick = unpack('i', br.read(4))[0]
+            #                 mapdatum_comment = readStr(br)
+            #                 mapdatum_frame = MapDatumFrame(mapdatum_X,mapdatum_Y,mapdatum_Round,mapdatum_point_count,maplevel,mapdatum_color,mapdatum_start_tick,mapdatum_end_tick,mapdatum_comment)
+            #                 self.mapdatum_data.append(mapdatum_frame)
+            #             offset = unpack('q', br.read(8))[0]
+            #             br.seek(offset-8, 0)
+            #             offset = unpack('q', br.read(8))[0]
+            #             br.seek(offset, 0)
 
-                    if(checkSegment(br, 'TAIL')):
-                        # 医生的文本注释信息
-                        self.comment = readStr(br)
-                        if(self.now_version < 22):
-                            br.seek(2, 1)
-                        # 医生选择的病变类型
-                        self.typeStr = readStr(br)
-                        break
-            else:
-                try:
-                    if (checkSegment(br, 'TAIL')):
-                        self.comment = readStr(br)
-                        br.seek(2, 1)
-                        self.typeStr = readStr(br)
-                except Exception:
-                    print(Exception.args)
+            #         if(checkSegment(br, 'TAIL')):
+            #             # 医生的文本注释信息
+            #             self.comment = readStr(br)
+            #             if(self.now_version < 22):
+            #                 br.seek(2, 1)
+            #             # 医生选择的病变类型
+            #             self.typeStr = readStr(br)
+            #             break
+            # else:
+            #     try:
+            #         if (checkSegment(br, 'TAIL')):
+            #             self.comment = readStr(br)
+            #             br.seek(2, 1)
+            #             self.typeStr = readStr(br)
+            #     except Exception:
+            #         print(Exception.args)
 
 def readString(self):
     length = self.readUInt16()

@@ -4,8 +4,8 @@ from recRead import *
 import numpy as np
 import matplotlib.pyplot as plt
 import openslide
-from sklearn import metrics
-from sklearn.cluster import Birch
+# from sklearn import metrics
+# from sklearn.cluster import Birch
 from sklearn.cluster import DBSCAN
 import copy
 import inspect
@@ -42,7 +42,7 @@ def get_variable_name(variable):
 
 
 class Sequence:
-    def __init__(self, path_ndpi:str, data:list,xy:list, R:list, L:list,av,z):        # xy 与r_list为dimension3 下 2维数组坐标
+    def __init__(self, path_ndpi:str, data:list,xy:list, R:list, L:list, av=None, z=None):        # xy 与r_list为dimension3 下 2维数组坐标
         # 初步筛选凝视点数据
         self.__data = data
         self.__av = av
@@ -55,7 +55,7 @@ class Sequence:
         self.__L = []
         self.num_data = len(self.__data)
         for i in range(len(self.__data)):
-            # if self.__xy[i] not in self.__XY:                       # 排除重复点（我认为在聚类过程中不需要排除，在凝视区域生成中为了提高效率可以去重）
+            # if self.__xy[i] not in self.__XY: # 排除重复点（我认为在聚类过程中不需要排除，在凝视区域生成中为了提高效率可以去重）
             if self.__data[i][-1] <= 30 and self.__data[i][2] > 0:
                 self.__tick_count.append(self.__xy.count(self.__xy[i]))  # 计算某个视点出现的次数
                 self.__XY.append(self.__xy[i])  # 添加 角速度》30 的凝视点坐标
@@ -220,7 +220,7 @@ class Sequence:
                            [255, 255, 255],-1)
 
             # 获取 总/各倍率 注视点 个数
-            self.num_fixation += len(self.__fixation_0)
+            self.num_fixation += len(self.__fixation_0) 
             self.num_fixation8 += len(self.__fixation_0)
 
             # 获取 总/各倍率 注视点 坐标
