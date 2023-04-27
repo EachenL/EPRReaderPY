@@ -254,6 +254,7 @@ class EPRread:
                     # self.screenY.append(screenY)
                     if headZ > 10 and eyeX > 0 and eyeY > 0 and dl > 0 and dl < 10:
                         # r = headZ * tan(3.0 / 180) * ppm  # 计算半径r
+                        
                         x = (eyeX - screenX) / (2 ** dl)
                         y = (eyeY - screenY) / (2 ** dl)  # ppm----像素/cm
                         if 0 <= x < self.MaxWidth and 0 <= y < self.MaxHeight:
@@ -367,10 +368,10 @@ def readStr(reader):
         print(e)
     return s
 
-if __name__ == "__main__":  # 这里是示例用法
-    eprfile = 'C:\\Users\\shund\\Desktop\\2021_10_16epr\\70037_0_BCC.epr'
-    epr = EPRread(eprfile, 2)
-    a = 1
+# if __name__ == "__main__":  # 这里是示例用法
+#     eprfile = 'C:\\Users\\shund\\Desktop\\2021_10_16epr\\70037_0_BCC.epr'
+#     epr = EPRread(eprfile, 2)
+#     a = 1
     # pathndpi = "C:\\Users\\shund\\Desktop\\SightPoint\\11111.ndpi"
     # eprfile = "C:\\Users\\shund\\Desktop\\SightPoint\\111112.epr"
     # rec = EPRread(eprfile, pathndpi, 2)

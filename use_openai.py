@@ -35,7 +35,7 @@ import openai
 class ChatGPT():
     def __init__(self):
         self.messages = []
-        api_key = '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'
+        api_key = os.getenv("NSD_OPENAI_API_KEY")
         org_id = 'org-emV4mY3cz3RsLMUkKTTnGZlE'
         openai.organization = org_id
         openai.api_key = api_key
