@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      autoReload="false" throwExceptions="true">
+
+    <targets>
+        <target name="logFile" xsi:type="File" concurrentWrites="true" keepFileOpen="false"
+                fileName="${specialfolder:folder=CommonApplicationData}/${gdc:item=AppName}/Logs/${shortdate}.log"
+                layout="${longdate} ${level} | ${message}${onexception:${newline} ${exception:format=ToString}}"/>
+    </targets>
+
+    <rules>
+        <logger name="*" minlevel="Debug" writeTo="logFile" />
+    </rules>
+</nlog>
