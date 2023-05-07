@@ -403,3 +403,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+dotnet-install.ps1
+build
+*.egg-info

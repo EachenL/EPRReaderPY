@@ -1,11 +1,12 @@
 import atexit
 import subprocess
 
-"""
-用于启动一个子进程，并在当前进程退出时退出子进程
-by ChatGPT
-"""
 class Launcher:
+    """
+    用于启动一个子进程，并在当前进程退出时退出子进程
+    by ChatGPT
+    """
+    
     def __init__(self, command):
         # 子进程的命令
         self.command = command
