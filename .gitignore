@@ -407,3 +407,5 @@ FodyWeavers.xsd
 dotnet-install.ps1
 build
 *.egg-info
+.vscode/
+dist/

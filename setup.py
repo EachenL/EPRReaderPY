@@ -17,7 +17,10 @@ else:
     sdk_url = "https://dot.net/v1/dotnet-install.sh"
     sdk_path = os.path.join(os.getcwd(), "dotnet-install.sh")
 
-urllib.request.urlretrieve(sdk_url, sdk_path)
+try:
+    urllib.request.urlretrieve(sdk_url, sdk_path)
+except Exception as e:
+    print(e)    
 
 # 安装.NET SDK
 if current_os == "Windows":
@@ -40,11 +43,13 @@ subprocess.run([
 
 # 设置包的元数据
 setup(
-    name="epr_reader",
+    name="EprReaderPY",
     version="24.0.0",
-    packages=find_packages("src"),
-    package_dir={"": "src"},
+    packages=find_packages(),
+    author="EachenL && Dear.Va",
+    url="https://github.com/EachenL/EPRReaderPY",
     install_requires=[
+        'dataclasses',
         # 你的依赖项
     ],
     # 其他元数据

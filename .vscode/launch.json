@@ -5,11 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Module",
+            "name": "Python: Current File",
             "type": "python",
             "request": "launch",
-            "module": "enter-your-module-name",
-            "justMyCode": true
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "cwd": "${fileDirname}"
         }
     ]
 }

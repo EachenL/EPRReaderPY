@@ -3,6 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using EasyPathology.Record;
 using Server.Models;
+using EasyPathology.Inference.Analyzers;
+using EasyPathology.Inference.Models;
+using EasyPathology.Record.AdditionalInfos;
+using EasyPathology.Definitions.Interfaces;
 
 namespace Server.Controllers;
 
@@ -23,7 +27,17 @@ public class ReaderController : ControllerBase {
 		if (argument == null) {
 			return new ArgumentException("Invalid argument");
 		}
-
-		return EasyPathologyRecord.LoadFromFile(argument.FilePath, argument.ReadHeaderOnly);
+		var epr = EasyPathologyRecord.LoadFromFile(argument.FilePath, argument.ReadHeaderOnly);
+		if (!argument.ReadHeaderOnly) {
+            var roiAnalyzer = new RoiAnalyzer();
+            var roiList = roiAnalyzer.Analysis(epr, new RoiAnalyzerParameter
+            {
+                VelocityThreshold = epr.AdditionalInfoSet.Threshold,
+                MinPts = 10
+            });
+            epr.AdditionalInfoSet.RoiList.AddRange(roiList);
+        }
+		
+        return epr;
 	}
 }

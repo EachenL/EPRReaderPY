@@ -1,6 +1,9 @@
 import atexit
 import subprocess
-
+import os
+import platform
+current_os = platform.system()
+Command = r'../Server/bin/Release/net7.0/win-x64/Server.exe' if current_os == 'Windows' else ''
 class Launcher:
     """
     用于启动一个子进程，并在当前进程退出时退出子进程
@@ -18,7 +21,7 @@ class Launcher:
         # 创建进程时指定creationflags参数，以隐藏子进程窗口
         self.process = subprocess.Popen(self.command, creationflags=subprocess.CREATE_NO_WINDOW)
         # 注册cleanup方法到atexit模块中，确保Python进程退出时，该方法会被自动调用
-        atexit.register(self.cleanup)
+        atexit.register(self.kill)
 
     def kill(self):
         # 如果子进程已经启动，则终结子进程并等待其退出
@@ -26,8 +29,8 @@ class Launcher:
             self.process.terminate()
             self.process.wait()
 
-if __name__ == '__main__':
-    # 创建Launcher对象
-    launcher = Launcher('Server.exe')
-    # 启动子进程
-    launcher.run()
+# if __name__ == '__main__':
+#     # 创建Launcher对象
+#     launcher = Launcher(r'C:\Users\Mark\source\repos\EachenL\EPRReaderPY\src\Server\bin\x64\Release\net7.0\Server.exe')
+#     # 启动子进程
+#     launcher.run()
