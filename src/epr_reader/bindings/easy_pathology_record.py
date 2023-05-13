@@ -93,5 +93,3 @@ class EasyPathologyRecord:
     additionalInfoSet: AdditionalInfoSet
     """附加信息"""
 
-    def __init__(self, epr_dict):
-        return

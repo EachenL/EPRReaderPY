@@ -3,7 +3,9 @@ import subprocess
 import os
 import platform
 current_os = platform.system()
-Command = r'../Server/bin/Release/net7.0/win-x64/Server.exe' if current_os == 'Windows' else ''
+current_dir = os.path.dirname(os.path.abspath(__file__))
+# Command = os.path.join(current_dir, r'..\Server\bin\Release\net7.0\win-x64\Server.exe' if current_os == 'Windows' else '')
+Command = r'C:\Users\Mark\source\repos\EachenL\EPRReaderPY\src\Server\bin\Release\net7.0\win-x64\Server.exe'
 class Launcher:
     """
     用于启动一个子进程，并在当前进程退出时退出子进程
