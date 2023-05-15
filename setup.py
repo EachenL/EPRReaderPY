@@ -3,6 +3,7 @@ import platform
 import subprocess
 import urllib.request
 
+
 from setuptools import setup, find_packages
 
 # 获取当前系统
@@ -20,17 +21,47 @@ else:
 try:
     urllib.request.urlretrieve(sdk_url, sdk_path)
 except Exception as e:
-    print(e)    
+    print(e)
 
-# 安装.NET SDK
-if current_os == "Windows":
-    subprocess.run(["powershell.exe", sdk_path, "--install-dir", os.getcwd(), "--no-path"])
-else:
-    subprocess.run(["chmod", "+x", sdk_path])
-    subprocess.run([sdk_path, "--install-dir", os.getcwd(), "--no-path"])
+# # 安装.NET SDK
+# if current_os == "Windows":
+#     subprocess.run(["powershell.exe", sdk_path, "--install-dir", os.getcwd(), "--no-path"])
+# else:
+#     subprocess.run(["chmod", "+x", sdk_path])
+#     subprocess.run(["bash", sdk_path, "--install-dir", os.getcwd(), "--no-path"])
 
 # 发布ASP.NET项目
 print("Publishing Server...")
+# nuget sources Add -Name "MyServer" -Source \\myserver\packages
+try:
+    subprocess.run([
+        "nuget",
+        "source",
+        "Add",
+        "-Name",
+        "\"EasyPathology\"",
+        "-Source",
+        "http://52.185.191.181:13288/v3/index.json"
+    ])
+    # nuget sources Disable -Name "MyServer"
+    subprocess.run([
+        "nuget",
+        "sources",
+        "Disable",
+        "-Name",
+        "\"nuget.org\""
+    ])
+    # nuget sources Enable -Name "nuget.org"
+    subprocess.run([
+        "nuget",
+        "sources",
+        "Enable",
+        "-Name",
+        "\"EasyPathology\""
+    ])
+    
+except:
+    raise Exception("lack of nuget")
 subprocess.run([
     "dotnet", 
     "publish", 
@@ -45,8 +76,10 @@ subprocess.run([
 setup(
     name="EprReaderPY",
     version="24.0.0",
-    packages=find_packages(),
     author="EachenL && Dear.Va",
+    packages=find_packages(where="src"),
+    package_dir={"epr_reader": "src/epr_reader", "Server": "src/Server"},
+    package_data={"Server": ["bin/Release/net7.0/linux-x64/*"]},
     url="https://github.com/EachenL/EPRReaderPY",
     install_requires=[
         'dataclasses',
