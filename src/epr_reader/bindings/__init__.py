@@ -1,0 +1,1 @@
+from .easy_pathology_record import EasyPathologyRecord

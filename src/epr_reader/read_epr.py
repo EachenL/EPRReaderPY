@@ -20,11 +20,16 @@ class read_epr:
 			"filePath": file_path,
 			"readHeaderOnly": read_header_only
 		}
-		re = requests.post(url=register_url, json=post, headers=header)
-		data = json.loads(re.content)['data']
+		times = 10
+		while times > 0:
+			try:
+				re = requests.post(url=register_url, json=post, headers=header, timeout=5)
+				data = json.loads(re.content)['data']
+				times = -1
+			except:
+				times -= 1
+		if times == 0:
+			raise Exception('epr读取失败')
 		data = EasyPathologyRecord(**data)
 		# print(data)
 		return data
-
-
-	# read_epr(r'E:\病理视频教学\吴泽病理教学视频\1532677\1532677.epr', False)
