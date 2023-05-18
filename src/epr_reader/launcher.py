@@ -8,7 +8,7 @@ current_os = platform.system()
 current_dir = os.path.dirname(os.path.abspath(__file__))
 # Command = os.path.join(current_dir, r'..\Server\bin\Release\net7.0\win-x64\Server.exe' if current_os == 'Windows' else '')
 if current_os == 'Windows':
-    Command = r'../Server/bin/Release/net7.0/linux-x64/Server.exe'
+    Command = r'../Server/bin/Release/net7.0/win-x64/Server.exe'
     Command = os.path.normpath(os.path.join(current_dir, Command))
 else:
     Command = r'../Server/bin/Release/net7.0/linux-x64/Server'
