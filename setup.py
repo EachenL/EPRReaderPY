@@ -23,12 +23,12 @@ try:
 except Exception as e:
     print(e)
 
-# # 安装.NET SDK
-# if current_os == "Windows":
-#     subprocess.run(["powershell.exe", sdk_path, "--install-dir", os.getcwd(), "--no-path"])
-# else:
-#     subprocess.run(["chmod", "+x", sdk_path])
-#     subprocess.run(["bash", sdk_path, "--install-dir", os.getcwd(), "--no-path"])
+# 安装.NET SDK
+if current_os == "Windows":
+    subprocess.run(["powershell.exe", sdk_path, "--install-dir", os.getcwd(), "--no-path"])
+else:
+    subprocess.run(["chmod", "+x", sdk_path])
+    subprocess.run(["bash", sdk_path, "--install-dir", os.getcwd(), "--no-path"])
 
 # 发布ASP.NET项目
 print("Publishing Server...")
