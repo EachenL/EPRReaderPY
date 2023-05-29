@@ -13,7 +13,7 @@ if current_os == 'Windows':
 else:
     Command = r'../Server/bin/Release/net7.0/linux-x64/Server'
     Command = os.path.normpath(os.path.join(current_dir, Command))
-    subprocess.run(["chmod", "+x", Command])
+    # subprocess.run(["chmod", "+x", Command])
 class Launcher:
     """
     用于启动一个子进程，并在当前进程退出时退出子进程

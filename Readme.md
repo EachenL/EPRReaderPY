@@ -15,7 +15,11 @@ http://52.185.191.181:13288/v3/index.json
 
 ## 安装
 在项目目录下执行
-
 ```
 python setup.py install
+```
+以开发形式执行
+
+```
+python setup.py develop
 ```
