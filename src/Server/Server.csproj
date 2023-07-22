@@ -19,14 +19,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="EasyPathology.Core" Version="1.1.1" />
-    <PackageReference Include="EasyPathology.Definitions" Version="1.1.1" />
-    <PackageReference Include="EasyPathology.Inference" Version="1.1.1" />
-    <PackageReference Include="EasyPathology.Record" Version="1.1.1" />
-    <PackageReference Include="OpenSlideNET" Version="1.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EasyPathology.Inference\EasyPathology.Inference.csproj" />
+    <ProjectReference Include="..\EasyPathology.Record\EasyPathology.Record.csproj" />
   </ItemGroup>
 
 </Project>

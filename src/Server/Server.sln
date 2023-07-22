@@ -5,6 +5,16 @@ VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "Server.csproj", "{A49670E3-DBB6-42C6-9AB2-47E7F8B0BE1E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyPathology.Record", "..\EasyPathology.Record\EasyPathology.Record.csproj", "{759D9B1F-B9B4-471A-BD05-64F21D7BF0A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyPathology.Core", "..\EasyPathology.Core\src\EasyPathology.Core.csproj", "{1CB60D15-5C8D-4EA5-9984-21CA4503072B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenSlideNET", "..\EasyPathology.Core\OpenSlideNET\OpenSlideNET.csproj", "{A2E901E4-66F1-4526-B6C8-ECB1026E940F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyPathology.Definitions", "..\EasyPathology.Core\EasyPathology.Definitions\src\EasyPathology.Definitions.csproj", "{3F510A58-7169-4280-BFFA-B809BE033572}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyPathology.Inference", "..\EasyPathology.Inference\EasyPathology.Inference.csproj", "{F262AE33-EC66-467E-AA53-157438569C21}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -15,6 +25,26 @@ Global
 		{A49670E3-DBB6-42C6-9AB2-47E7F8B0BE1E}.Debug|x64.Build.0 = Debug|x64
 		{A49670E3-DBB6-42C6-9AB2-47E7F8B0BE1E}.Release|x64.ActiveCfg = Release|x64
 		{A49670E3-DBB6-42C6-9AB2-47E7F8B0BE1E}.Release|x64.Build.0 = Release|x64
+		{759D9B1F-B9B4-471A-BD05-64F21D7BF0A2}.Debug|x64.ActiveCfg = Debug|x64
+		{759D9B1F-B9B4-471A-BD05-64F21D7BF0A2}.Debug|x64.Build.0 = Debug|x64
+		{759D9B1F-B9B4-471A-BD05-64F21D7BF0A2}.Release|x64.ActiveCfg = Release|x64
+		{759D9B1F-B9B4-471A-BD05-64F21D7BF0A2}.Release|x64.Build.0 = Release|x64
+		{1CB60D15-5C8D-4EA5-9984-21CA4503072B}.Debug|x64.ActiveCfg = Debug|x64
+		{1CB60D15-5C8D-4EA5-9984-21CA4503072B}.Debug|x64.Build.0 = Debug|x64
+		{1CB60D15-5C8D-4EA5-9984-21CA4503072B}.Release|x64.ActiveCfg = Release|x64
+		{1CB60D15-5C8D-4EA5-9984-21CA4503072B}.Release|x64.Build.0 = Release|x64
+		{A2E901E4-66F1-4526-B6C8-ECB1026E940F}.Debug|x64.ActiveCfg = Debug|x64
+		{A2E901E4-66F1-4526-B6C8-ECB1026E940F}.Debug|x64.Build.0 = Debug|x64
+		{A2E901E4-66F1-4526-B6C8-ECB1026E940F}.Release|x64.ActiveCfg = Release|x64
+		{A2E901E4-66F1-4526-B6C8-ECB1026E940F}.Release|x64.Build.0 = Release|x64
+		{3F510A58-7169-4280-BFFA-B809BE033572}.Debug|x64.ActiveCfg = Debug|x64
+		{3F510A58-7169-4280-BFFA-B809BE033572}.Debug|x64.Build.0 = Debug|x64
+		{3F510A58-7169-4280-BFFA-B809BE033572}.Release|x64.ActiveCfg = Release|x64
+		{3F510A58-7169-4280-BFFA-B809BE033572}.Release|x64.Build.0 = Release|x64
+		{F262AE33-EC66-467E-AA53-157438569C21}.Debug|x64.ActiveCfg = Debug|x64
+		{F262AE33-EC66-467E-AA53-157438569C21}.Debug|x64.Build.0 = Debug|x64
+		{F262AE33-EC66-467E-AA53-157438569C21}.Release|x64.ActiveCfg = Release|x64
+		{F262AE33-EC66-467E-AA53-157438569C21}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

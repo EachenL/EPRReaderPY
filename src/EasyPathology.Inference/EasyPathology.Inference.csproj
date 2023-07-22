@@ -1,0 +1,79 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Platforms>x64</Platforms>
+        <SignAssembly>True</SignAssembly>
+        <AssemblyOriginatorKeyFile>..\Key\Key.snk</AssemblyOriginatorKeyFile>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+        <Version>1.1.1</Version>
+        <Authors>Antelcat</Authors>
+        <IncludeSymbols>True</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="EasyPathology.Inference.Tests" Key="00240000048000009400000006020000002400005253413100040000010001009d6996e943e9fdb2c314767a3cc3b92ba3d096050b2739e3d7242ec278de9f39cf89bda9a828e178dcd2021b569867308c3059905cf5b637d9e3d2f5a60f5b2ba8a58368a5329fefbdb33b11574c4460fa6dac29f753c972a53739346e1ed12ec92eb5df36f6c7d2cb0de0f86d85dd23e7016a25bc4af4cb03021c117a6c2fce" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\EasyPathology.Core\src\EasyPathology.Core.csproj" />
+        <ProjectReference Include="..\EasyPathology.Record\EasyPathology.Record.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="Resources\Embedded.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Embedded.resx</DependentUpon>
+        </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Update="Resources\Embedded.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>Embedded.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.14.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="Resources\segment_anything\decoder.onnx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Resources\segment_anything\encoder.onnx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Resources\segment_anything\encoder_fixed.onnx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Resources\segment_anything\encoder_sim.onnx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Resources\Paraformer-large\config.yaml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Resources\Paraformer-large\am.mvn">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Resources\Vad-16k\model.onnx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Resources\Vad-16k\vad.yaml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Resources\Paraformer-large\model_quant.onnx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Resources\Vad-16k\vad.mvn">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+</Project>
