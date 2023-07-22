@@ -1,0 +1,3 @@
+[submodule "src/EasyPathology.Core"]
+	path = src/EasyPathology.Core
+	url = https://github.com/DearVa/EasyPathology.Core
