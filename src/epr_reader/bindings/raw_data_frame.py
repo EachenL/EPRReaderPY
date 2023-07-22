@@ -1,9 +1,12 @@
 from typing import List 
-from dataclasses import dataclass 
+from dataclasses import dataclass
+from dataclasses_json import dataclass_json
 from ..data_types.point3 import Point3 
 from ..data_types.point2 import Point2 
 from .frame_state import FrameState
 
+
+@dataclass_json
 @dataclass 
 class RawDataFrame: 
     """ 

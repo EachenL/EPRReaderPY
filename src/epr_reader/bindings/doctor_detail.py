@@ -1,5 +1,6 @@
-from typing import List 
+from typing import List
 from dataclasses import dataclass
+from dataclasses_json import dataclass_json
 from enum import Enum
 
 
@@ -17,40 +18,40 @@ class Gender(Enum):
 
 
 class DoctorLevel(Enum):
-	Senior = 0
-	"""高级"""
+    Senior = 0
+    """高级"""
 
-	Intermediate = 1
-	"""中级"""
+    Intermediate = 1
+    """中级"""
 
-	Junior = 2
-	"""初级"""
+    Junior = 2
+    """初级"""
 
-	Student = 3
-	"""学生"""
+    Student = 3
+    """学生"""
 
-	Unknown = 4
-	"""未知"""
+    Unknown = 4
+    """未知"""
 
 
 class SlideReadCount(Enum):
-	LessThan10K = 0
-	"""1万张一下"""
+    LessThan10K = 0
+    """1万张一下"""
 
-	LessThan50KMoreThan10K = 1
-	"""1万-5万"""
+    LessThan50KMoreThan10K = 1
+    """1万-5万"""
 
-	LessThan100KMoreThan50K = 2
-	"""5万-10万"""
+    LessThan100KMoreThan50K = 2
+    """5万-10万"""
 
-	MoreThan100K = 3
-	"""10万以上"""
+    MoreThan100K = 3
+    """10万以上"""
 
-	Unknown = 4
-	"""未知"""
+    Unknown = 4
+    """未知"""
 
 
-
+@dataclass_json
 @dataclass
 class DoctorDetail:
     """医生的详细信息"""

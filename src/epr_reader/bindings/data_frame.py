@@ -1,8 +1,11 @@
 from typing import List 
-from dataclasses import dataclass 
+from dataclasses import dataclass
+from dataclasses_json import dataclass_json
 from .raw_data_frame import RawDataFrame
 from datetime import timedelta
 
+
+@dataclass_json
 @dataclass 
 class DataFrame(RawDataFrame): 
     """ 

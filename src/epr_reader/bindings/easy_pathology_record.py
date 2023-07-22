@@ -1,11 +1,14 @@
 from typing import List 
-from dataclasses import dataclass 
+from dataclasses import dataclass
+from dataclasses_json import dataclass_json
 from datetime import timedelta
 from .doctor_detail import DoctorDetail
 from .raw_data_frame import RawDataFrame
 from .data_frame import DataFrame
 from .additional_info_set import AdditionalInfoSet
 
+
+@dataclass_json
 @dataclass 
 class EasyPathologyRecord:
 
@@ -17,6 +20,9 @@ class EasyPathologyRecord:
 
     framesPerSecond: int
     """每秒帧率"""
+
+    title: str
+    """EPR文件中记录的标题"""
 
     frameCount: int
     """EPR文件的总帧数"""

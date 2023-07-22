@@ -1,10 +1,13 @@
 from typing import List 
 from dataclasses import dataclass
+from dataclasses_json import dataclass_json
 from .roi import Roi
 from .segmented_roi import SegmentedRoi
 
+
+@dataclass_json
 @dataclass 
-class AdditionalInfoSet():
+class AdditionalInfoSet:
     """
     EPR文件中的附加信息
     """

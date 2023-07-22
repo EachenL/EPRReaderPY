@@ -1,6 +1,7 @@
 from enum import Enum
-
 from dataclasses import dataclass
+from dataclasses_json import dataclass_json
+
 
 class FrameStateType(Enum):
     Unknown = 0
@@ -23,6 +24,7 @@ class FrameStateType(Enum):
     Next = 0xFF,
 
 
+@dataclass_json
 @dataclass 
 class FrameState:
     type: FrameStateType

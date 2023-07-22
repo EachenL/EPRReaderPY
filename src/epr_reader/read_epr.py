@@ -8,11 +8,11 @@ import time
 import psutil
 class read_epr:
 	
-	def __init__(self):
-		self.server = Launcher(Command)
-		self.server.run()
-		time.sleep(1)
-		print('server is running.')
+	# def __init__(self):
+	# 	self.server = Launcher(Command)
+	# 	self.server.run()
+	# 	time.sleep(1)
+	# 	print('server is running.')
 
 		
 	def read(self, file_path: str, read_header_only=False):

@@ -1,5 +1,8 @@
-from dataclasses import dataclass 
+from dataclasses import dataclass
+from dataclasses_json import dataclass_json
 
+
+@dataclass_json
 @dataclass 
 class Roi():
     """一个Roi区域，是由若干注视点经过聚类得到的，Roi是一个圆，包含了这些注视点"""

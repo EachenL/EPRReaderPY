@@ -1,10 +1,13 @@
 from typing import List 
-from dataclasses import dataclass 
+from dataclasses import dataclass
+from dataclasses_json import dataclass_json
 from datetime import timedelta
 from ..data_types.region2 import Region2
 
+
+@dataclass_json
 @dataclass 
-class SegmentedRoi():
+class SegmentedRoi:
     """
     由SegmentAnything智能分割的一个Roi区域
     """
