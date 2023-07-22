@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\Key\Key.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\EasyPathology.Core\Key\Key.snk</AssemblyOriginatorKeyFile>
     <LangVersion>preview</LangVersion>
     <Platforms>x64</Platforms>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -25,6 +25,12 @@
   <ItemGroup>
     <ProjectReference Include="..\EasyPathology.Core\src\EasyPathology.Core.csproj" />
     <ProjectReference Include="..\EasyPathology.Core\EasyPathology.Definitions\src\EasyPathology.Definitions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\EasyPathology.Core\Key\Key.snk">
+      <Link>Key.snk</Link>
+    </None>
   </ItemGroup>
 
 </Project>

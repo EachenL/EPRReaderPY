@@ -7,7 +7,7 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Platforms>x64</Platforms>
         <SignAssembly>True</SignAssembly>
-        <AssemblyOriginatorKeyFile>..\Key\Key.snk</AssemblyOriginatorKeyFile>
+        <AssemblyOriginatorKeyFile>..\EasyPathology.Core\Key\Key.snk</AssemblyOriginatorKeyFile>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <Version>1.1.1</Version>
         <Authors>Antelcat</Authors>
@@ -73,6 +73,9 @@
       </None>
       <None Update="Resources\Vad-16k\vad.mvn">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Include="..\EasyPathology.Core\Key\Key.snk">
+        <Link>Key.snk</Link>
       </None>
     </ItemGroup>
 
