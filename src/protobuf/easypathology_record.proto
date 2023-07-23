@@ -1,0 +1,98 @@
+syntax = "proto3";
+package easyPathologyPb.record;
+
+import "google/protobuf/duration.proto";
+import "additional_infos/doctor_detail_info.proto";
+import "additional_infos/additional_info_set.proto";
+import "frame_states/frame_state.proto";
+import "raw_data_frame.proto";
+import "data_frame.proto";
+
+message EasyPathologyRecord {
+  // 文件创建时间
+  google.protobuf.Duration createDateTime = 1;
+
+  // 文件版本号
+  int32 version = 2;
+
+  // 每秒帧率
+  int32 framesPerSecond = 3;
+
+  // EPR文件中记录的标题
+  string title = 4;
+
+  // EPR文件的总帧数
+  int32 frameCount = 5;
+
+  // EPR文件中记录的屏幕横向分辨率
+  int32 screenPixelWidth = 6;
+
+  // EPR文件中记录的屏幕纵向分辨率
+  int32 screenPixelHeight = 7;
+
+  // 刚进入阅片时的宽度
+  int32 initialWidth = 8;
+
+  // 刚进入阅片时的高度
+  int32 initialHeight = 9;
+
+  // 阅片时，最大倍率的宽度
+  int32 maxLevelWidth = 10;
+
+  // 阅片时，最大倍率的高度
+  int32 maxLevelHeight = 11;
+
+  // 切片文件的最大宽度
+  int32 maxSlideWidth = 12;
+
+  // 切片文件的最大高度
+  int32 maxSlideHeight = 13;
+
+  // 最大level，也就是刚进入阅片的level
+  int32 maxLevel = 14;
+
+  // 最小level
+  int32 minLevel = 15;
+
+  // 医生总共看了多少个level
+  int32 totalLevelCount = 16;
+
+  // EPR文件中记录的屏幕物理宽度，单位是cm
+  float actualScreenWidthCentimeter = 17;
+
+  // EPR文件中记录的屏幕物理高度，单位是cm
+  float actualScreenHeightCentimeter = 18;
+
+  // EPR文件中记录的切片文件名，不含路径，带拓展名
+  string slideName = 19;
+
+  // EPR文件中记录的切片的快速哈希值
+  string quickHash1 = 20;
+
+  // EPR文件中记录的医生信息
+  easyPathologyPb.record.additional_infos.DoctorDetailInfo doctorDetail = 21;
+
+  // EPR文件中记录的医生注释
+  string additionalComment = 22;
+
+  // EPR文件中记录的医生判断类型字符串
+  string selectedType = 23;
+
+  // 数据帧的原始数据
+  repeated easyPathologyPb.record.RawDataFrame rawDataFrames = 24;
+
+  // 数据帧
+  repeated easyPathologyPb.record.DataFrame dataFrames = 25;
+
+  // 记录当前EPR文件的路径
+  string eprFilePath = 26;
+
+  // 对应了每个VirtualLevel的缩放
+  repeated int32 levelScales = 27;
+
+  // 总时间
+  google.protobuf.Duration totalTime = 28;
+
+  // 附加信息
+  easyPathologyPb.record.additional_infos.AdditionalInfoSet additionalInfoSet = 29;
+}

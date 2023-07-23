@@ -1,32 +1,83 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Platforms>x64</Platforms>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Platforms>x64</Platforms>
+        <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="LogConfigure.xml" />
-  </ItemGroup>
+    <ItemGroup>
+        <None Remove="LogConfigure.xml" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="LogConfigure.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+    <ItemGroup>
+        <Protobuf Include="..\protobuf\additional_infos\additional_info_set.proto">
+          <Link>Protos\additional_infos\additional_info_set.proto</Link>
+        </Protobuf>
+        <Protobuf Include="..\protobuf\additional_infos\doctor_detail_info.proto">
+          <Link>Protos\additional_infos\doctor_detail_info.proto</Link>
+        </Protobuf>
+        <Protobuf Include="..\protobuf\additional_infos\roi.proto">
+          <Link>Protos\additional_infos\roi.proto</Link>
+        </Protobuf>
+        <Protobuf Include="..\protobuf\additional_infos\segmented_roi.proto">
+          <Link>Protos\additional_infos\segmented_roi.proto</Link>
+        </Protobuf>
+        <Protobuf Include="..\protobuf\data_frame.proto">
+          <Link>Protos\data_frame.proto</Link>
+        </Protobuf>
+        <Protobuf Include="..\protobuf\data_types\point2d.proto">
+          <Link>Protos\data_types\point2d.proto</Link>
+        </Protobuf>
+        <Protobuf Include="..\protobuf\data_types\point3d.proto">
+          <Link>Protos\data_types\point3d.proto</Link>
+        </Protobuf>
+        <Protobuf Include="..\protobuf\data_types\point3f.proto">
+          <Link>Protos\data_types\point3f.proto</Link>
+        </Protobuf>
+        <Protobuf Include="..\protobuf\data_types\region2d.proto">
+          <Link>Protos\data_types\region2d.proto</Link>
+        </Protobuf>
+        <Protobuf Include="..\protobuf\easypathology_record.proto">
+          <Link>Protos\easypathology_record.proto</Link>
+        </Protobuf>
+        <Protobuf Include="..\protobuf\frame_states\frame_state.proto">
+          <Link>Protos\frame_states\frame_state.proto</Link>
+        </Protobuf>
+        <Protobuf Include="..\protobuf\frame_states\frame_state_type.proto">
+          <Link>Protos\frame_states\frame_state_type.proto</Link>
+        </Protobuf>
+        <Protobuf Include="..\protobuf\grpc\reader.proto" GrpcServices="Server">
+          <Link>Protos\grpc\reader.proto</Link>
+        </Protobuf>
+        <Protobuf Include="..\protobuf\grpc\writer.proto" GrpcServices="Server">
+          <Link>Protos\grpc\writer.proto</Link>
+        </Protobuf>
+        <Protobuf Include="..\protobuf\raw_data_frame.proto">
+          <Link>Protos\raw_data_frame.proto</Link>
+        </Protobuf>
+        <Content Include="LogConfigure.xml">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
-  </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\EasyPathology.Inference\EasyPathology.Inference.csproj" />
-    <ProjectReference Include="..\EasyPathology.Record\EasyPathology.Record.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Google.Protobuf" Version="3.24.0-rc2" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.55.0" />
+        <PackageReference Include="Grpc.Tools" Version="2.56.2">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
+    </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\EasyPathology.Inference\EasyPathology.Inference.csproj" />
+        <ProjectReference Include="..\EasyPathology.Record\EasyPathology.Record.csproj" />
+    </ItemGroup>
 </Project>

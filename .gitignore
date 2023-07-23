@@ -409,3 +409,6 @@ build
 *.egg-info
 .vscode/
 dist/
+
+src/python_epr/binding
+!src/python_epr/binding/__init__.py

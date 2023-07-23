@@ -1,0 +1,8 @@
+syntax = "proto3";
+package easyPathologyPb.definitions.data_types;
+
+message Point3D {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+}

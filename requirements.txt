@@ -1,1 +1,4 @@
 dataclasses
+protobuf
+grpcio
+grpcio-tools

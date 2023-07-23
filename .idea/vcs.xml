@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/src/EasyPathology.Core" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/src/EasyPathology.Core/EasyPathology.Definitions" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/src/EasyPathology.Core/EasyPathology.Definitions/Key" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/src/EasyPathology.Core/Key" vcs="Git" />
+  </component>
+</project>

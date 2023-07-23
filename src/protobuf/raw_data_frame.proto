@@ -1,0 +1,45 @@
+syntax = "proto3";
+package easyPathologyPb.record;
+
+import "data_types/point3f.proto";
+import "frame_states/frame_state.proto";
+
+// 存储在epr中的原始帧数据
+message RawDataFrame {
+
+  // 眼睛的注视x坐标，相对于屏幕左上角
+  int32 gazeX = 1;
+
+  // 眼睛的注视y坐标，相对于屏幕左上角
+  int32 gazeY = 2;
+
+  // 缩放level，需要注意这个Level并不是OpenSlide里的真实Level
+  int32 virtualLevel = 3;
+
+  // 屏幕左上角相对于切片左上角的x坐标
+  int32 screenX = 4;
+
+  // 屏幕左上角相对于切片左上角的y坐标
+  int32 screenY = 5;
+
+  // 左眼和眼动仪的相对坐标，单位是cm
+  easyPathologyPb.definitions.data_types.Point3F leftEyePosition = 6;
+
+  // 右眼和眼动仪的相对坐标，单位是cm
+  easyPathologyPb.definitions.data_types.Point3F rightEyePosition = 7;
+
+  // 眼动数据有效性，24版本+
+  bool isEyeTrackerDataValid = 8;
+
+  // 单位是秒
+  float timeStamp = 9;
+
+  // 鼠标在屏幕上的X坐标（像素）
+  int32 cursorX = 10;
+
+  // 鼠标在屏幕上的Y坐标（像素）
+  int32 cursorY = 11;
+
+  // 当前帧所有“状态”的列表
+  repeated easyPathologyPb.record.frame_states.FrameState frameStates = 12;
+}

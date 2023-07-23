@@ -1,0 +1,18 @@
+syntax = "proto3";
+package easyPathologyPb.record.additional_infos;
+
+import "google/protobuf/duration.proto";
+import "data_types/region2d.proto";
+
+// 由SegmentAnything智能分割的一个Roi区域
+message SegmentedRoi {
+
+  // 该区域的开始时间
+  google.protobuf.Duration beginTime = 1;
+
+  // 该区域的结束时间
+  google.protobuf.Duration endTime = 2;
+
+  // 分割出的所有区域列表
+  repeated easyPathologyPb.definitions.data_types.Region2D regions = 3;
+}

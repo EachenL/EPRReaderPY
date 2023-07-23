@@ -1,0 +1,23 @@
+syntax = "proto3";
+package easyPathologyPb.record.additional_infos;
+
+// 一个Roi区域，是由若干注视点经过聚类得到的，Roi是一个圆，包含了这些注视点
+message Roi {
+
+  // 相对于当前virtualLevel的坐标，而不是切片最大分辨率的坐标
+  float x = 1;
+
+  // // 相对于当前virtualLevel的坐标，而不是切片最大分辨率的坐标
+  float y = 2;
+
+  // 相对于当前virtualLevel的半径，而不是切片最大分辨率的坐标
+  float radius = 3;
+
+  int32 virtualLevel = 4;
+
+  // 该Roi的开始帧
+  int32 beginFrameIndex = 5;
+
+  // 该Roi的结束帧
+  int32 endFrameIndex = 6;
+}

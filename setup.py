@@ -2,9 +2,25 @@ import os
 import platform
 import subprocess
 import urllib.request
-
-
+from grpc_tools import protoc
 from setuptools import setup, find_packages
+
+
+def compile_proto(path: str):
+    protoc.main([
+        './src/protobuf/' + path,
+        '-I', './src/protobuf',
+        '--python_out', './src/python_epr/binding',
+        '--grpc_python_out', './src/python_epr/binding'
+    ])
+
+
+print("Compiling Protobuf...")
+compile_proto('*.proto')
+compile_proto('additional_infos/*.proto')
+compile_proto('data_types/*.proto')
+compile_proto('frame_states/*.proto')
+compile_proto('grpc/*.proto')
 
 # 获取当前系统
 current_os = platform.system()
@@ -22,7 +38,7 @@ try:
     urllib.request.urlretrieve(sdk_url, sdk_path)
 except Exception as e:
     print(e)
-    
+
 # network doesn't work
 # # 安装.NET SDK
 # if current_os == "Windows":
@@ -33,49 +49,19 @@ except Exception as e:
 
 # 发布ASP.NET项目
 print("Publishing Server...")
-# nuget sources Add -Name "MyServer" -Source \\myserver\packages
-try:
-    subprocess.run([
-        "nuget",
-        "source",
-        "Add",
-        "-Name",
-        "\"EasyPathology\"",
-        "-Source",
-        "http://52.185.191.181:13288/v3/index.json"
-    ])
-    # nuget sources Disable -Name "MyServer"
-    subprocess.run([
-        "nuget",
-        "sources",
-        "Disable",
-        "-Name",
-        "\"nuget.org\""
-    ])
-    # nuget sources Enable -Name "nuget.org"
-    subprocess.run([
-        "nuget",
-        "sources",
-        "Enable",
-        "-Name",
-        "\"EasyPathology\""
-    ])
-    
-except:
-    raise Exception("lack of nuget")
 subprocess.run([
-    "dotnet", 
-    "publish", 
-    "src/Server/Server.csproj", 
-    "-c", 
-    "Release", 
-    "-r", 
+    "dotnet",
+    "publish",
+    "src/Server/Server.csproj",
+    "-c",
+    "Release",
+    "-r",
     "win-x64" if current_os == "Windows" else "linux-x64"
 ])
 
 # 设置包的元数据
 setup(
-    name="EprReaderPY",
+    name="PythonEpr",
     version="24.0.0",
     author="EachenL && Dear.Va",
     packages=find_packages(where="src"),

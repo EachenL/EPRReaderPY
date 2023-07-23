@@ -1,0 +1,17 @@
+syntax = "proto3";
+package easyPathologyPb.record.grpc;
+
+import "easypathology_record.proto";
+
+message ReadRequest {
+    string filePath = 1;
+    bool readHeaderOnly = 2;
+}
+
+message ReadResponse {
+    easyPathologyPb.record.EasyPathologyRecord epr = 1;
+}
+
+service Reader {
+    rpc ReadEpr(ReadRequest) returns (ReadResponse) {}
+}

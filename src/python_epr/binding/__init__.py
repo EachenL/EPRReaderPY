@@ -1,0 +1,2 @@
+import easypathology_record_pb2
+from grpc import reader_pb2, writer_pb2

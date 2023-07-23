@@ -1,0 +1,25 @@
+syntax = "proto3";
+package easyPathologyPb.record;
+
+import "google/protobuf/duration.proto";
+import "raw_data_frame.proto";
+
+message DataFrame {
+    easyPathologyPb.record.RawDataFrame raw = 1;
+
+    // 这一帧的起始时间。由于第一帧的时间戳往往大于0，这个是减去第一帧后运算出来的
+    google.protobuf.Duration beginTime = 2;
+    google.protobuf.Duration endTime = 3;
+
+    // 视野焦点半径（单位为像素，相对于最大缩放)
+    float radius = 4;
+
+    // 一个0-1的值，表示眨眼，1完全闭眼，0完全睁开
+    float blinkValue = 5;
+
+    // 视线的角速度，单位为rad/s
+    float velocity = 6;
+
+    // 当前帧的下标
+    int32 frameIndex = 7;
+}

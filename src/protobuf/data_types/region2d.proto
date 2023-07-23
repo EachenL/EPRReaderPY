@@ -1,0 +1,8 @@
+syntax = "proto3";
+package easyPathologyPb.definitions.data_types;
+
+import "data_types/point2d.proto";
+
+message Region2D {
+  repeated easyPathologyPb.definitions.data_types.Point2D points = 1;
+}

@@ -1,0 +1,8 @@
+syntax = "proto3";
+package easyPathologyPb.record.frame_states;
+
+import "frame_states/frame_state_type.proto";
+
+message FrameState {
+  easyPathologyPb.record.frame_states.FrameStateType type = 1;
+}

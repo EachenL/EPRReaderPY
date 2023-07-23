@@ -1,0 +1,75 @@
+syntax = "proto3";
+package easyPathologyPb.record.additional_infos;
+
+enum Gender {
+  // 女
+  Female = 0;
+
+  // 男
+  Male = 1;
+
+  // 武装直升机
+  Other = 2;
+}
+
+enum DoctorLevel {
+  // 高级
+  Senior = 0;
+
+  // 中级
+  Intermediate = 1;
+
+  // 初级
+  Junior = 2;
+
+  // 学生
+  Student = 3;
+}
+
+enum SlideReadCount {
+  // 1万张一下
+  LessThan10K = 0;
+
+  // 1万-5万
+  LessThan50KMoreThan10K = 1;
+
+  // 5万-10万
+  LessThan100KMoreThan50K = 2;
+
+  // 10万以上
+  MoreThan100K = 3;
+}
+
+// 医生的详细信息
+message DoctorDetailInfo {
+  // 姓名
+  string name = 1;
+
+  easyPathologyPb.record.additional_infos.Gender gender = 2;
+
+  int32 age = 3;
+
+  // 从业年数，0表示小于一年
+  int32 workYear = 4;
+
+  // 职称
+  easyPathologyPb.record.additional_infos.DoctorLevel level = 5;
+
+  // 阅片数
+  easyPathologyPb.record.additional_infos.SlideReadCount slideReadCount = 6;
+
+  // 使用本软件阅片的数量
+  int32 readCountViaEasyPathology = 7;
+
+  // 所在单位/医院
+  string unit = 8;
+
+  // 个人介绍
+  string introduction = 9;
+
+  // 头像，jpg编码
+  bytes avatarData = 10;
+
+  // 医生用户的标识符
+  string uuid = 11;
+}

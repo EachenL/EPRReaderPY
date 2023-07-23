@@ -1,0 +1,17 @@
+syntax = "proto3";
+package easyPathologyPb.record.grpc;
+
+import "easypathology_record.proto";
+
+message WriteRequest {
+    string filePath = 1;
+    easyPathologyPb.record.EasyPathologyRecord epr = 2;
+}
+
+message WriteResponse {
+    string message = 1;
+}
+
+service Writer {
+    rpc WriteEpr(WriteRequest) returns (WriteResponse) {}
+}

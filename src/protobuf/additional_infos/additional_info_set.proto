@@ -1,0 +1,13 @@
+syntax = "proto3";
+package easyPathologyPb.record.additional_infos;
+
+import "additional_infos/roi.proto";
+import "additional_infos/segmented_roi.proto";
+
+// EPR文件中的附加信息
+message AdditionalInfoSet {
+    repeated easyPathologyPb.record.additional_infos.Roi roiList = 1;
+    // repeated easyPathologyPb.record.additional_infos.SegmentedRoi segmentedRoiList = 2;
+    // DiagnosisClassifyTree diagnosisClassifyTree = 3;
+    // float threshold = 4;
+}
